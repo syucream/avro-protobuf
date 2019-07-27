@@ -41,8 +41,8 @@ var (
 		// nested's
 		// descriptor.FieldDescriptorProto_TYPE_GROUP:
 		descriptor.FieldDescriptorProto_TYPE_MESSAGE: nil,
-		descriptor.FieldDescriptorProto_TYPE_BYTES:  []byte{},
-		descriptor.FieldDescriptorProto_TYPE_UINT32: 0,
+		descriptor.FieldDescriptorProto_TYPE_BYTES:   []byte{},
+		descriptor.FieldDescriptorProto_TYPE_UINT32:  0,
 		// nested's
 		// descriptor.FieldDescriptorProto_TYPE_ENUM:
 		descriptor.FieldDescriptorProto_TYPE_SFIXED32: 0,
