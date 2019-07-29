@@ -22,27 +22,26 @@ func GetRecordSchemaFromDescriptor(fd genDescriptor.FileDescriptorProto, md genD
 	}
 
 	return map[string]interface{}{
-		"name":      *md.Name,
-		"namespace": *fd.Package,
+		"name":      md.GetName(),
+		"namespace": fd.GetPackage(),
 		"type":      "record",
 		"fields":    fields,
 	}, nil
 }
 
 func GetRecordSchemaFieldFromDescriptor(d genDescriptor.FieldDescriptorProto) (map[string]interface{}, error) {
-	// TODO nested types
-	t, typeOk := ProtoType2AvroType[*d.Type]
+	t, typeOk := ProtoType2AvroType[d.GetType()]
 	if !typeOk {
 		return nil, ErrUnknownProtoType
 	}
 
-	dv, defaultOk := ProtoType2AvroDefault[*d.Type]
+	dv, defaultOk := ProtoType2AvroDefault[d.GetType()]
 	if !defaultOk {
 		return nil, ErrUnknownProtoType
 	}
 
 	return map[string]interface{}{
-		"name":    *d.Name,
+		"name":    d.GetName(),
 		"type":    t,
 		"default": dv,
 	}, nil
