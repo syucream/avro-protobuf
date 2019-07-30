@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.syucream.example;
+
+message SearchResponse {
+  message Result {
+    string url = 1;
+    string title = 2;
+    string snippets = 3;
+  }
+  Result results = 1;
+}

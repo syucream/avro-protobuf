@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/ptypes"
+	"github.com/syucream/avro-protobuf/gen/proto"
 )
 
 func TestGetRecordSchemaFromMessage(t *testing.T) {
@@ -29,6 +30,45 @@ func TestGetRecordSchemaFromMessage(t *testing.T) {
 						"name":    "nanos",
 						"type":    "int",
 						"default": 0,
+					},
+				},
+			},
+		},
+		{
+			input: &com_syucream_example.SearchResponse{},
+			expect: map[string]interface{}{
+				"name":      "SearchResponse",
+				"namespace": "com.syucream.example",
+				"type":      "record",
+				"fields": []map[string]interface{}{
+					{
+						"default": nil,
+						"name":    "results",
+						"type": []interface{}{
+							"null",
+							map[string]interface{}{
+								"name":      "Result",
+								"namespace": "com.syucream.example",
+								"type":      "record",
+								"fields": []map[string]interface{}{
+									{
+										"default": "",
+										"name":    "url",
+										"type":    "string",
+									},
+									{
+										"default": "",
+										"name":    "title",
+										"type":    "string",
+									},
+									{
+										"default": "",
+										"name":    "snippets",
+										"type":    "string",
+									},
+								},
+							},
+						},
 					},
 				},
 			},
