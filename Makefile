@@ -4,7 +4,12 @@ proto:
 
 .PHONY: fmt
 fmt:
+	gofmt -w cmd/**/*.go
 	gofmt -w pkg/**/*.go
+
+.PHONY: cmd
+cmd:
+	go build -o protoc-gen-avro cmd/protoc-gen-avro/main.go
 
 .PHONY: test
 test:
