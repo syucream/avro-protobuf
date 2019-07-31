@@ -42,32 +42,38 @@ func TestGetRecordSchemaFromMessage(t *testing.T) {
 				"type":      "record",
 				"fields": []map[string]interface{}{
 					{
-						"default": nil,
+						"default": []interface{}{},
 						"name":    "results",
-						"type": []interface{}{
-							"null",
-							map[string]interface{}{
-								"name":      "Result",
-								"namespace": "com.syucream.example",
-								"type":      "record",
-								"fields": []map[string]interface{}{
-									{
-										"default": "",
-										"name":    "url",
-										"type":    "string",
-									},
-									{
-										"default": "",
-										"name":    "title",
-										"type":    "string",
-									},
-									{
-										"default": "",
-										"name":    "snippets",
-										"type":    "string",
+						"type": map[string]interface{}{
+							"items": []interface{}{
+								"null",
+								map[string]interface{}{
+									"name":      "Result",
+									"namespace": "com.syucream.example",
+									"type":      "record",
+									"fields": []map[string]interface{}{
+										{
+											"default": "",
+											"name":    "url",
+											"type":    "string",
+										},
+										{
+											"default": "",
+											"name":    "title",
+											"type":    "string",
+										},
+										{
+											"default": []interface{}{},
+											"name":    "snippets",
+											"type": map[string]interface{}{
+												"items": "string",
+												"type":  "array",
+											},
+										},
 									},
 								},
 							},
+							"type": "array",
 						},
 					},
 				},

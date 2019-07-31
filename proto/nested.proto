@@ -6,7 +6,7 @@ message SearchResponse {
   message Result {
     string url = 1;
     string title = 2;
-    string snippets = 3;
+    repeated string snippets = 3;
   }
-  Result results = 1;
+  repeated Result results = 1;
 }

@@ -40,10 +40,10 @@ func GetNestedRecordSchemaFromDescriptor(fd *genDescriptor.FileDescriptorProto, 
 	return []interface{}{"null", recordSchema}, nil
 }
 
-// TODO support repeated
 func GetRecordSchemaFieldFromDescriptor(d *genDescriptor.FieldDescriptorProto, fd *genDescriptor.FileDescriptorProto, tm typeMap) (map[string]interface{}, error) {
 	var tpe interface{}
 	if d.GetType() == genDescriptor.FieldDescriptorProto_TYPE_MESSAGE {
+		// nested messages -> nested records
 		tn := d.GetTypeName()
 		if len(tn) == 0 || tn[0] != '.' {
 			return nil, ErrUnknownProtoType
@@ -65,16 +65,24 @@ func GetRecordSchemaFieldFromDescriptor(d *genDescriptor.FieldDescriptorProto, f
 		tpe = t
 	}
 
-	dv, defaultOk := ProtoType2AvroDefault[d.GetType()]
-	if !defaultOk {
-		return nil, ErrUnknownProtoType
+	if d.GetLabel() == genDescriptor.FieldDescriptorProto_LABEL_REPEATED {
+		// repeated -> array
+		return map[string]interface{}{
+			"name":    d.GetName(),
+			"type":    wrapByArray(tpe),
+			"default": []interface{}{},
+		}, nil
+	} else {
+		dv, defaultOk := ProtoType2AvroDefault[d.GetType()]
+		if !defaultOk {
+			return nil, ErrUnknownProtoType
+		}
+		return map[string]interface{}{
+			"name":    d.GetName(),
+			"type":    tpe,
+			"default": dv,
+		}, nil
 	}
-
-	return map[string]interface{}{
-		"name":    d.GetName(),
-		"type":    tpe,
-		"default": dv,
-	}, nil
 }
 
 func getTypeMap(fd *genDescriptor.FileDescriptorProto, md *genDescriptor.DescriptorProto) typeMap {
@@ -95,4 +103,11 @@ func getTypeMap(fd *genDescriptor.FileDescriptorProto, md *genDescriptor.Descrip
 	// TODO it doesn't resolve messages recursively for now
 
 	return messageTypes
+}
+
+func wrapByArray(items interface{}) map[string]interface{} {
+	return map[string]interface{}{
+		"type":  "array",
+		"items": items,
+	}
 }
