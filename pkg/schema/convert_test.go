@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"github.com/linkedin/goavro"
 	"testing"
 
 	"github.com/golang/protobuf/descriptor"
@@ -99,6 +100,10 @@ func TestGetRecordSchemaFromMessage(t *testing.T) {
 
 		if actualJson != expectedJson {
 			t.Errorf("expected: %v, but actual: %v", expectedJson, actualJson)
+		}
+
+		if _, err = goavro.NewCodec(actualJson); err != nil {
+			t.Errorf("expected Avro schema json, but it isn't: %v", err)
 		}
 	}
 }
