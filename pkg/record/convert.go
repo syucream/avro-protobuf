@@ -2,9 +2,10 @@ package record
 
 import (
 	"fmt"
-	"github.com/golang/protobuf/proto"
 	"reflect"
 	"strings"
+
+	"github.com/golang/protobuf/proto"
 )
 
 var (

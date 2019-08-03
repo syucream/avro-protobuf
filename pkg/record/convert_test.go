@@ -2,10 +2,11 @@ package record
 
 import (
 	"encoding/json"
-	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes"
 	"testing"
 	"time"
+
+	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/ptypes"
 )
 
 func TestConvert(t *testing.T) {

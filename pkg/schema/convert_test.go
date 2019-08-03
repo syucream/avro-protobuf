@@ -2,8 +2,9 @@ package schema
 
 import (
 	"encoding/json"
-	"github.com/linkedin/goavro"
 	"testing"
+
+	"github.com/linkedin/goavro"
 
 	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/ptypes"

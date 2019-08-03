@@ -4,6 +4,8 @@ proto:
 
 .PHONY: fmt
 fmt:
+	goimports -w cmd/**/*.go
+	goimports -w pkg/**/*.go
 	gofmt -w cmd/**/*.go
 	gofmt -w pkg/**/*.go
 
