@@ -23,7 +23,7 @@ func TestSerialize(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		serializer, err := NewSerializer(c.input)
+		serializer, err := NewSerDe(c.input)
 		if err != nil {
 			t.Error(err)
 		}

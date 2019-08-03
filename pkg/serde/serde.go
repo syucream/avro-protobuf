@@ -10,11 +10,11 @@ import (
 	"github.com/syucream/avro-protobuf/pkg/schema"
 )
 
-type Serializer struct {
+type SerDe struct {
 	Codec *goavro.Codec
 }
 
-func NewSerializer(msg descriptor.Message) (*Serializer, error) {
+func NewSerDe(msg descriptor.Message) (*SerDe, error) {
 	schemaMap, err := schema.GetRecordSchemaFromMessage(msg)
 	if err != nil {
 		return nil, err
@@ -30,12 +30,12 @@ func NewSerializer(msg descriptor.Message) (*Serializer, error) {
 		return nil, err
 	}
 
-	return &Serializer{
+	return &SerDe{
 		Codec: codec,
 	}, nil
 }
 
-func (s *Serializer) Serialize(msg proto.Message) ([]byte, error) {
+func (s *SerDe) Serialize(msg proto.Message) ([]byte, error) {
 	recordMap, err := record.Convert(msg)
 	if err != nil {
 		return nil, err
@@ -43,3 +43,7 @@ func (s *Serializer) Serialize(msg proto.Message) ([]byte, error) {
 
 	return s.Codec.BinaryFromNative(nil, recordMap)
 }
+
+// TODO it requires avro -> proto converter
+// func (s *SerDe) Deserialize(avroBytes []byte) ([]byte, error) {
+// }
