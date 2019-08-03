@@ -19,14 +19,17 @@ func TestConvert(t *testing.T) {
 				return v
 			}(),
 			expected: map[string]interface{}{
-				"Nanos":   2,
-				"Seconds": 1,
+				"nanos":   2,
+				"seconds": 1,
 			},
 		},
 	}
 
 	for _, c := range cases {
-		actual := Convert(c.input)
+		actual, err := Convert(c.input)
+		if err != nil {
+			t.Error(err)
+		}
 
 		actualJson, actualErr := toJsonString(actual)
 		if actualErr != nil {
