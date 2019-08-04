@@ -1,7 +1,10 @@
 package serde
 
 import (
+	"bytes"
 	"encoding/json"
+
+	"github.com/golang/protobuf/jsonpb"
 
 	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/proto"
@@ -11,7 +14,8 @@ import (
 )
 
 type SerDe struct {
-	Codec *goavro.Codec
+	Codec       *goavro.Codec
+	unmarshaler jsonpb.Unmarshaler
 }
 
 func NewSerDe(msg descriptor.Message) (*SerDe, error) {
@@ -31,7 +35,8 @@ func NewSerDe(msg descriptor.Message) (*SerDe, error) {
 	}
 
 	return &SerDe{
-		Codec: codec,
+		Codec:       codec,
+		unmarshaler: jsonpb.Unmarshaler{},
 	}, nil
 }
 
@@ -44,6 +49,18 @@ func (s *SerDe) Serialize(msg proto.Message) ([]byte, error) {
 	return s.Codec.BinaryFromNative(nil, recordMap)
 }
 
-// TODO it requires avro -> proto converter
-// func (s *SerDe) Deserialize(avroBytes []byte) ([]byte, error) {
-// }
+func (s *SerDe) Deserialize(avroBytes []byte, v proto.Message) error {
+	datum, _, err := s.Codec.NativeFromBinary(avroBytes)
+	if err != nil {
+		return err
+	}
+
+	datumJson, err := json.Marshal(datum)
+	if err != nil {
+		return err
+	}
+
+	rbuf := bytes.NewBuffer(datumJson)
+
+	return s.unmarshaler.Unmarshal(rbuf, v)
+}
