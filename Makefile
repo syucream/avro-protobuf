@@ -1,6 +1,6 @@
 .PHONY: proto
 proto:
-	protoc --go_out=gen/ proto/*.proto
+	find proto -name "*.proto" -print0 | xargs -0 -IXXX protoc --go_out=gen/ XXX
 
 .PHONY: fmt
 fmt:
