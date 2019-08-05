@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/syucream/avro-protobuf/gen/proto/com/syucream/example"
+
 	"github.com/linkedin/goavro"
 
 	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/ptypes"
-	"github.com/syucream/avro-protobuf/gen/proto"
 )
 
 func TestGetRecordSchemaFromMessage(t *testing.T) {
