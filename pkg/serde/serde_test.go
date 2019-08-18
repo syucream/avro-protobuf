@@ -1,11 +1,9 @@
 package serde
 
 import (
-	"testing"
-	"time"
-
 	"github.com/golang/protobuf/descriptor"
-	"github.com/golang/protobuf/ptypes"
+	"github.com/syucream/avro-protobuf/gen/proto/com/syucream/example"
+	"testing"
 )
 
 func TestSerialize(t *testing.T) {
@@ -14,10 +12,17 @@ func TestSerialize(t *testing.T) {
 		// TODO more validation values
 	}{
 		{
-			input: func() descriptor.Message {
-				v, _ := ptypes.TimestampProto(time.Unix(1, 2))
-				return v
-			}(),
+			input: &com_syucream_example.SearchResponse{
+				Results: []*com_syucream_example.SearchResponse_Result{
+					{
+						Url: "http://example.com",
+						Title: "title",
+						Snippets: []string{
+							"snippet",
+						},
+					},
+				},
+			},
 		},
 		// TODO more cases
 	}

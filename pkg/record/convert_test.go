@@ -1,7 +1,8 @@
 package record
 
 import (
-	"encoding/json"
+	"github.com/syucream/avro-protobuf/gen/proto/com/syucream/example"
+	"reflect"
 	"testing"
 	"time"
 
@@ -24,6 +25,30 @@ func TestConvert(t *testing.T) {
 				"seconds": 1,
 			},
 		},
+		{
+			input: &com_syucream_example.SearchResponse{
+				Results: []*com_syucream_example.SearchResponse_Result{
+					{
+						Url:   "http://example.com",
+						Title: "title",
+						Snippets: []string{
+							"snippet",
+						},
+					},
+				},
+			},
+			expected: map[string]interface{}{
+				"results": []map[string]interface{}{
+					{
+						"url":   "http://example.com",
+						"title": "title",
+						"snippets": []string{
+							"snippet",
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, c := range cases {
@@ -32,27 +57,8 @@ func TestConvert(t *testing.T) {
 			t.Error(err)
 		}
 
-		actualJson, actualErr := toJsonString(actual)
-		if actualErr != nil {
-			t.Error(actualErr)
-		}
-
-		expectedJson, expectedErr := toJsonString(c.expected)
-		if expectedErr != nil {
-			t.Error(expectedErr)
-		}
-
-		if actualJson != expectedJson {
-			t.Errorf("expected: %v, but actual: %v", expectedJson, actualJson)
+		if reflect.DeepEqual(actual, c.expected) {
+			t.Errorf("expected: %v, but actual: %v", c.expected, actual)
 		}
 	}
-}
-
-func toJsonString(schema map[string]interface{}) (string, error) {
-	d, err := json.Marshal(schema)
-	if err != nil {
-		return "", err
-	}
-
-	return string(d), nil
 }
