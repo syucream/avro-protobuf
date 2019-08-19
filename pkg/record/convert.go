@@ -5,6 +5,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/golang/protobuf/descriptor"
+	"github.com/linkedin/goavro"
+
 	"github.com/golang/protobuf/proto"
 )
 
@@ -30,25 +33,36 @@ func Convert(v proto.Message) (map[string]interface{}, error) {
 			return nil, err
 		}
 
-		ifVal := rv.Field(i).Interface()
-		if nested, ok := ifVal.(proto.Message); ok {
-			convertedNested, err := Convert(nested)
-			if err != nil {
-				return nil, err
+		fv := rv.Field(i)
+
+		// []interface{} is special because type assertion doesn't work
+		if fv.Kind() == reflect.Slice {
+			arr := []interface{}{}
+			for j := 0; j < fv.Len(); j++ {
+				if nested, ok := fv.Index(j).Interface().(descriptor.Message); ok {
+					convertedNested, err := Convert(nested)
+					if err != nil {
+						return nil, err
+					}
+					fd, md := descriptor.ForMessage(nested)
+					unionKey := fd.GetPackage() + "." + md.GetName()
+					arr = append(arr, goavro.Union(unionKey, convertedNested))
+				}
 			}
-			converted[name] = convertedNested
-		} else if nestedArray, ok := ifVal.([]proto.Message); ok {
-			arr := []map[string]interface{}{}
-			for _, nested := range nestedArray {
+			converted[name] = arr
+		} else {
+			ifVal := fv.Interface()
+			if nested, ok := ifVal.(descriptor.Message); ok {
 				convertedNested, err := Convert(nested)
 				if err != nil {
 					return nil, err
 				}
-				arr = append(arr, convertedNested)
+				fd, md := descriptor.ForMessage(nested)
+				unionKey := fd.GetPackage() + "." + md.GetName()
+				converted[name] = goavro.Union(unionKey, convertedNested)
+			} else {
+				converted[name] = ifVal
 			}
-			converted[name] = arr
-		} else {
-			converted[name] = ifVal
 		}
 	}
 

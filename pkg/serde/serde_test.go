@@ -1,9 +1,10 @@
 package serde
 
 import (
+	"testing"
+
 	"github.com/golang/protobuf/descriptor"
 	"github.com/syucream/avro-protobuf/gen/proto/com/syucream/example"
-	"testing"
 )
 
 func TestSerialize(t *testing.T) {
@@ -15,7 +16,7 @@ func TestSerialize(t *testing.T) {
 			input: &com_syucream_example.SearchResponse{
 				Results: []*com_syucream_example.SearchResponse_Result{
 					{
-						Url: "http://example.com",
+						Url:   "http://example.com",
 						Title: "title",
 						Snippets: []string{
 							"snippet",

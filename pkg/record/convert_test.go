@@ -1,10 +1,11 @@
 package record
 
 import (
-	"github.com/syucream/avro-protobuf/gen/proto/com/syucream/example"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/syucream/avro-protobuf/gen/proto/com/syucream/example"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
