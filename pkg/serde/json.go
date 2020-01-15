@@ -22,6 +22,7 @@ func unwrapUnion(orig map[string]interface{}) (map[string]interface{}, error) {
 				if vv, ok := v.(map[string]interface{}); ok {
 					unwrapped = vv
 				} else {
+					// An irregular case, is the serializer broken ???
 					return nil, ErrInvalidGoavroUnion
 				}
 			}
@@ -33,23 +34,10 @@ func unwrapUnion(orig map[string]interface{}) (map[string]interface{}, error) {
 	return orig, nil
 }
 
-func toProtoJsonArray(orig []interface{}) ([]interface{}, error) {
-	arr := []interface{}{}
-
-	for _, v := range orig {
-		vv, err := toProtoJson(v)
-		if err != nil {
-			return nil, err
-		}
-		arr = append(arr, vv)
-	}
-
-	return arr, nil
-}
-
-// TODO rename?
-func toProtoJson(orig interface{}) (map[string]interface{}, error) {
+func toProtoJson(orig interface{}) (interface{}, error) {
 	switch orig.(type) {
+
+	// JSON object
 	case map[string]interface{}:
 		m, err := unwrapUnion(orig.(map[string]interface{}))
 		if err != nil {
@@ -71,7 +59,7 @@ func toProtoJson(orig interface{}) (map[string]interface{}, error) {
 				protoJson[k] = sub
 
 			case []interface{}:
-				sub, err := toProtoJsonArray(v.([]interface{}))
+				sub, err := toProtoJson(v.([]interface{}))
 				if err != nil {
 					return nil, err
 				}
@@ -88,7 +76,19 @@ func toProtoJson(orig interface{}) (map[string]interface{}, error) {
 
 		return protoJson, nil
 
-	// TODO array??
+	// JSON array
+	case []interface{}:
+		arr := []interface{}{}
+
+		for _, v := range orig.([]interface{}) {
+			vv, err := toProtoJson(v)
+			if err != nil {
+				return nil, err
+			}
+			arr = append(arr, vv)
+		}
+
+		return arr, nil
 
 	default:
 		return nil, ErrBrokenGoavroValue
