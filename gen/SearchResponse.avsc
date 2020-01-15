@@ -1,0 +1,42 @@
+{
+  "fields": [
+    {
+      "default": [],
+      "name": "results",
+      "type": {
+        "items": [
+          "null",
+          {
+            "fields": [
+              {
+                "default": "",
+                "name": "url",
+                "type": "string"
+              },
+              {
+                "default": "",
+                "name": "title",
+                "type": "string"
+              },
+              {
+                "default": [],
+                "name": "snippets",
+                "type": {
+                  "items": "string",
+                  "type": "array"
+                }
+              }
+            ],
+            "name": "Result",
+            "namespace": "com.syucream.example.SearchResponse",
+            "type": "record"
+          }
+        ],
+        "type": "array"
+      }
+    }
+  ],
+  "name": "SearchResponse",
+  "namespace": "google.protobuf",
+  "type": "record"
+}
