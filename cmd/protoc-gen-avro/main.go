@@ -25,7 +25,8 @@ func main() {
 	records := []map[string]interface{}{}
 	for _, f := range req.GetProtoFile() {
 		for _, m := range f.GetMessageType() {
-			record, err := schema.GetRecordSchemaFromDescriptor(f, m)
+			ns := schema.GetNamespace(proto.MessageName(m))
+			record, err := schema.GetRecordSchemaFromDescriptor(f, m, ns)
 			if err != nil {
 				log.Fatal(err)
 			}

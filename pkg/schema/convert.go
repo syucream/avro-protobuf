@@ -1,7 +1,10 @@
 package schema
 
 import (
+	"strings"
+
 	"github.com/golang/protobuf/descriptor"
+	"github.com/golang/protobuf/proto"
 	genDescriptor "github.com/golang/protobuf/protoc-gen-go/descriptor"
 )
 
@@ -10,10 +13,12 @@ type typeMap map[string]*genDescriptor.DescriptorProto
 func GetRecordSchemaFromMessage(msg descriptor.Message) (map[string]interface{}, error) {
 	fd, md := descriptor.ForMessage(msg)
 
-	return GetRecordSchemaFromDescriptor(fd, md)
+	ns := GetNamespace(proto.MessageName(msg))
+
+	return GetRecordSchemaFromDescriptor(fd, md, ns)
 }
 
-func GetRecordSchemaFromDescriptor(fd *genDescriptor.FileDescriptorProto, md *genDescriptor.DescriptorProto) (map[string]interface{}, error) {
+func GetRecordSchemaFromDescriptor(fd *genDescriptor.FileDescriptorProto, md *genDescriptor.DescriptorProto, ns string) (map[string]interface{}, error) {
 	var fields []map[string]interface{}
 	for _, f := range md.Field {
 		rf, err := GetRecordSchemaFieldFromDescriptor(f, fd, getTypeMap(fd, md))
@@ -26,14 +31,14 @@ func GetRecordSchemaFromDescriptor(fd *genDescriptor.FileDescriptorProto, md *ge
 	return map[string]interface{}{
 		"name": md.GetName(),
 		// should it use fully-qualified?
-		"namespace": fd.GetPackage(),
+		"namespace": ns,
 		"type":      "record",
 		"fields":    fields,
 	}, nil
 }
 
-func GetNestedRecordSchemaFromDescriptor(fd *genDescriptor.FileDescriptorProto, md *genDescriptor.DescriptorProto) ([]interface{}, error) {
-	recordSchema, err := GetRecordSchemaFromDescriptor(fd, md)
+func GetNestedRecordSchemaFromDescriptor(fd *genDescriptor.FileDescriptorProto, md *genDescriptor.DescriptorProto, ns string) ([]interface{}, error) {
+	recordSchema, err := GetRecordSchemaFromDescriptor(fd, md, ns)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +58,8 @@ func GetRecordSchemaFieldFromDescriptor(d *genDescriptor.FieldDescriptorProto, f
 		if !typeOk {
 			return nil, ErrUnknownProtoType
 		}
-		t, err := GetNestedRecordSchemaFromDescriptor(fd, md)
+		ns := GetNamespace(tn)
+		t, err := GetNestedRecordSchemaFromDescriptor(fd, md, ns)
 		if err != nil {
 			return nil, err
 		}
@@ -101,9 +107,21 @@ func getTypeMap(fd *genDescriptor.FileDescriptorProto, md *genDescriptor.Descrip
 		messageTypes[fqtn] = nmt
 	}
 
-	// TODO it doesn't resolve messages recursively for now
+	// TODO resolve messages recursively
 
 	return messageTypes
+}
+
+// GetNamespace gets 'namespace' field in Avro from proto message name.
+func GetNamespace(fullName string) string {
+	sp := strings.Split(fullName, ".")
+
+	// strip heading '.'
+	if sp[0] == "" {
+		sp = sp[1:]
+	}
+
+	return strings.Join(sp[:len(sp)-1], ".")
 }
 
 func wrapByArray(items interface{}) map[string]interface{} {

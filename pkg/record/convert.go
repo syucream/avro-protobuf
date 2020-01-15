@@ -5,13 +5,19 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/syucream/avro-protobuf/pkg/schema"
+
 	"github.com/golang/protobuf/descriptor"
 	"github.com/linkedin/goavro"
 
 	"github.com/golang/protobuf/proto"
 )
 
+const unionKeyPrefix = "__unionkey__"
+
 var (
+	unionKeyPrefixLen = len(unionKeyPrefix)
+
 	ErrUnknownStructTagFormat = fmt.Errorf("struct tag format is broken")
 )
 
@@ -44,8 +50,9 @@ func Convert(v proto.Message) (map[string]interface{}, error) {
 					if err != nil {
 						return nil, err
 					}
-					fd, md := descriptor.ForMessage(nested)
-					unionKey := fd.GetPackage() + "." + md.GetName()
+					ns := schema.GetNamespace(proto.MessageName(nested))
+					_, md := descriptor.ForMessage(nested)
+					unionKey := ns + "." + md.GetName()
 					arr = append(arr, goavro.Union(unionKey, convertedNested))
 				}
 			}
@@ -57,8 +64,9 @@ func Convert(v proto.Message) (map[string]interface{}, error) {
 				if err != nil {
 					return nil, err
 				}
-				fd, md := descriptor.ForMessage(nested)
-				unionKey := fd.GetPackage() + "." + md.GetName()
+				ns := schema.GetNamespace(proto.MessageName(nested))
+				_, md := descriptor.ForMessage(nested)
+				unionKey := ns + "." + md.GetName()
 				converted[name] = goavro.Union(unionKey, convertedNested)
 			} else {
 				converted[name] = ifVal
@@ -67,6 +75,17 @@ func Convert(v proto.Message) (map[string]interface{}, error) {
 	}
 
 	return converted, nil
+}
+
+func IsUnionKey(k string) bool {
+	return len(k) > unionKeyPrefixLen && k[:unionKeyPrefixLen] == unionKeyPrefix
+}
+
+func getUnionKey(msg descriptor.Message) string {
+	ns := schema.GetNamespace(proto.MessageName(msg))
+	_, md := descriptor.ForMessage(msg)
+
+	return unionKeyPrefix + "." + ns + "." + md.GetName()
 }
 
 func getFieldNameFromTag(tag reflect.StructTag) (string, error) {

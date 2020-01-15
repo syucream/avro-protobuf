@@ -52,7 +52,7 @@ func TestGetRecordSchemaFromMessage(t *testing.T) {
 								"null",
 								map[string]interface{}{
 									"name":      "Result",
-									"namespace": "com.syucream.example",
+									"namespace": "com.syucream.example.SearchResponse",
 									"type":      "record",
 									"fields": []map[string]interface{}{
 										{

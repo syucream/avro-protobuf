@@ -55,12 +55,20 @@ func (s *SerDe) Deserialize(avroBytes []byte, v proto.Message) error {
 		return err
 	}
 
-	datumJson, err := json.Marshal(datum)
+	// avro interface{} -> protobuf-json convertable map
+	adjustedDatum, err := toProtoJson(datum)
+	if err != nil {
+		return err
+	}
+
+	// protobuf-json convertable map -> json bytes
+	datumJson, err := json.Marshal(adjustedDatum)
 	if err != nil {
 		return err
 	}
 
 	rbuf := bytes.NewBuffer(datumJson)
 
+	// json bytes -> protobuf value
 	return s.unmarshaler.Unmarshal(rbuf, v)
 }
