@@ -6,6 +6,15 @@ It bundles protobuf <-> avro schema conversions, record value conversions, SerDe
 
 ## Supported conversions
 
+### schema
+
+- protobuf descriptors -> Avro schema
+  - supported
+- Avro schema -> protobuf descriptors
+  - not yet
+  
+### value
+
 - protobuf value -> Avro bytes
   - partially
 - Avro bytes -> protobuf value
