@@ -29,8 +29,7 @@ func GetRecordSchemaFromDescriptor(fd *genDescriptor.FileDescriptorProto, md *ge
 	}
 
 	return map[string]interface{}{
-		"name": md.GetName(),
-		// should it use fully-qualified?
+		"name":      md.GetName(),
 		"namespace": ns,
 		"type":      "record",
 		"fields":    fields,

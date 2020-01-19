@@ -39,6 +39,7 @@ func toProtoJson(orig interface{}) (interface{}, error) {
 
 	// JSON object
 	case map[string]interface{}:
+		// XXX it doesn't work
 		m, err := unwrapUnion(orig.(map[string]interface{}))
 		if err != nil {
 			return nil, err

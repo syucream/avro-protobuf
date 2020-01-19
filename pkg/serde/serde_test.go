@@ -43,5 +43,7 @@ func TestSerialize(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		// TODO compare payloads
 	}
 }
