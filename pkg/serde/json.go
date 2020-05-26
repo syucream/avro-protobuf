@@ -35,32 +35,32 @@ func unwrapUnion(orig map[string]interface{}) (map[string]interface{}, error) {
 }
 
 func toProtoJson(orig interface{}) (interface{}, error) {
-	switch orig.(type) {
+	switch value := orig.(type) {
 
 	// JSON object
 	case map[string]interface{}:
 		// XXX it doesn't work
-		m, err := unwrapUnion(orig.(map[string]interface{}))
+		m, err := unwrapUnion(value)
 		if err != nil {
 			return nil, err
 		}
 
 		protoJson := map[string]interface{}{}
 		for k, v := range m {
-			switch v.(type) {
+			switch vv := v.(type) {
 
 			case int64, uint64:
-				protoJson[k] = fmt.Sprint(v)
+				protoJson[k] = fmt.Sprint(vv)
 
 			case map[string]interface{}:
-				sub, err := toProtoJson(v.(map[string]interface{}))
+				sub, err := toProtoJson(vv)
 				if err != nil {
 					return nil, err
 				}
 				protoJson[k] = sub
 
 			case []interface{}:
-				sub, err := toProtoJson(v.([]interface{}))
+				sub, err := toProtoJson(vv)
 				if err != nil {
 					return nil, err
 				}
@@ -81,7 +81,7 @@ func toProtoJson(orig interface{}) (interface{}, error) {
 	case []interface{}:
 		arr := []interface{}{}
 
-		for _, v := range orig.([]interface{}) {
+		for _, v := range value {
 			vv, err := toProtoJson(v)
 			if err != nil {
 				return nil, err

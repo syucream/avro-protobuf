@@ -81,13 +81,6 @@ func IsUnionKey(k string) bool {
 	return len(k) > unionKeyPrefixLen && k[:unionKeyPrefixLen] == unionKeyPrefix
 }
 
-func getUnionKey(msg descriptor.Message) string {
-	ns := schema.GetNamespace(proto.MessageName(msg))
-	_, md := descriptor.ForMessage(msg)
-
-	return unionKeyPrefix + "." + ns + "." + md.GetName()
-}
-
 func getFieldNameFromTag(tag reflect.StructTag) (string, error) {
 	protoTag := tag.Get("protobuf")
 
