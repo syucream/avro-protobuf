@@ -30,6 +30,9 @@ jobs:
             dep ensure
         fi
 
+    - name: Run golangci-lint
+      uses: actions-contrib/golangci-lint@v1
+
     - name: Build
       run: go build -o protoc-gen-avro cmd/protoc-gen-avro/main.go
 
