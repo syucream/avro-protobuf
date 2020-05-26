@@ -1,6 +1,8 @@
 # avro-protobuf
 
-A schema and value conversion utilities in Go, like [avro-protobuf](https://avro.apache.org/docs/1.8.2/api/java/org/apache/avro/protobuf/package-summary.html).
+![Go](https://github.com/syucream/avro-protobuf/workflows/Go/badge.svg)
+
+A schema and value conversion module and CLI tools in Go, like [avro-protobuf](https://avro.apache.org/docs/1.8.2/api/java/org/apache/avro/protobuf/package-summary.html).
 
 It bundles protobuf <-> avro schema conversions, record value conversions, SerDe and protoc plugin.
 
@@ -57,37 +59,50 @@ It bundles protobuf <-> avro schema conversions, record value conversions, SerDe
 ## protoc-gen-avro
 
 It's a subproject of the avro-protobuf. It's a protoc plugin read .proto files and generate .avsc files.
+You can get a binary of the plugin at the release page of this GitHub repo, or `go get`
 
 ```sh
-# when you have proto/nested.proto
-$ protoc --plugin=./protoc-gen-avro --avro_out=./gen proto/com/syucream/example/nested.proto
+$ go get -u github.com/syucream/avro-protobuf/tree/master/cmd/protoc-gen-avro
+```
 
-# then you'll get .avsc in ./gen
-$ ls gen/
-SearchResponse.avsc
-$ cat gen/SearchResponse.avsc
+It works as a protoc plugin, like:
+
+```sh
+$ cat proto/com/syucream/example/simple.proto
+// https://developers.google.com/protocol-buffers/docs/proto3#simple
+
+syntax = "proto3";
+
+message SearchRequest {
+    string query = 1;
+    int32 page_number = 2;
+    int32 result_per_page = 3;
+ 
+$ protoc --plugin=./protoc-gen-avro --avro_out=./gen proto/com/syucream/example/simple.proto
+
+$ cat gen/SearchRequest.avsc
 {
   "fields": [
     {
-      "default": [],
-      "name": "results",
-      "type": {
-        "items": [
-          "null",
-          {
-            "fields": [
-              {
-                "default": "",
-                "name": "url",
-                "type": "string"
-              },
-              {
-                "default": "",
-                "name": "title",
-                "type": "string"
-              },
-              ...
-
+      "default": "",
+      "name": "query",
+      "type": "string"
+    },
+    {
+      "default": 0,
+      "name": "page_number",
+      "type": "int"
+    },
+    {
+      "default": 0,
+      "name": "result_per_page",
+      "type": "int"
+    }
+  ],
+  "name": "SearchRequest",
+  "namespace": "google.protobuf",
+  "type": "record"
+}
 ```
 
 ## references

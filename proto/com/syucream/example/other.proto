@@ -1,3 +1,5 @@
+// https://developers.google.com/protocol-buffers/docs/proto3#other
+
 syntax = "proto3";
 
 package com.syucream.example;

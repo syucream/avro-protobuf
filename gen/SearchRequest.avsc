@@ -1,0 +1,22 @@
+{
+  "fields": [
+    {
+      "default": "",
+      "name": "query",
+      "type": "string"
+    },
+    {
+      "default": 0,
+      "name": "page_number",
+      "type": "int"
+    },
+    {
+      "default": 0,
+      "name": "result_per_page",
+      "type": "int"
+    }
+  ],
+  "name": "SearchRequest",
+  "namespace": "google.protobuf",
+  "type": "record"
+}
